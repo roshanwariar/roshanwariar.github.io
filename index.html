@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>| Roshan Wariar |</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Interactive CPU Chiplet Design | Roshan Wariar</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&display=swap');
     @import url('https://fonts.cdnjs.com/css?family=Aceh');
@@ -15,6 +15,7 @@
       font-family: 'Aceh', 'Avenir Next', 'Montserrat', sans-serif;
       text-transform: lowercase;
       font-weight: bold;
+      -webkit-tap-highlight-color: transparent; /* Remove mobile tap highlight */
     }
     
     body {
@@ -85,6 +86,7 @@
       position: relative;
       height: 600px;
       margin: 0 auto;
+      margin-top: -30px; /* Default negative margin */
     }
     
     .chiplet-interactive {
@@ -119,6 +121,7 @@
       border: 2px solid rgba(255,255,255,0.8);
       transform-style: preserve-3d;
       overflow: visible;
+      z-index: 5; /* Higher z-index to ensure visibility */
     }
     
     .chiplet-part:active {
@@ -167,11 +170,14 @@
       z-index: 10;
     }
     
+    /* Default core positions for larger screens */
+    /* Base positions for cores (4 corners) */
     .core1 {
       left: 72px;
       top: 108px;
       right: auto;
       bottom: auto;
+      position: absolute;
     }
     
     .core2 {
@@ -179,16 +185,23 @@
       top: 108px;
       right: 72px;
       bottom: auto;
+      position: absolute;
     }
     
     .core3 {
       left: 72px;
+      top: auto;
+      right: auto;
       bottom: 108px;
+      position: absolute;
     }
     
     .core4 {
+      left: auto;
+      top: auto;
       right: 72px;
       bottom: 108px;
+      position: absolute;
     }
     
     .pin {
@@ -197,6 +210,7 @@
       background-color: #FFD700;
       border-radius: 0;
       position: absolute;
+      transition: opacity 0.5s ease;
     }
     
     .circuit-board {
@@ -229,20 +243,8 @@
       border: 2px solid #FFD700;
       white-space: nowrap;
       min-width: 96px;
+      transition: all 0.3s ease; /* Smooth transition for size changes */
     }
-
-    .profile-photo {
-  width: 75%;                /* Takes 75% of the container width */
-  max-width: 150px;          /* But never larger than 150px */
-  height: auto;              /* Maintain aspect ratio */
-  aspect-ratio: 1/1;         /* Keep it square */
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid #FFD700;
-  margin: 10px auto;
-  display: block;
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
-}
     
     .core1 .title-label { color: #FF5733; }
     .core2 .title-label { color: #33A1FF; }
@@ -410,6 +412,23 @@
       pointer-events: none;
     }
     
+    /* Responsive breakpoints */
+    @media (max-width: 1200px) {
+      .chiplet-interactive {
+        width: 560px;
+        height: 450px;
+      }
+      
+      .circuit-board {
+        width: 680px;
+        height: 570px;
+      }
+      
+      .welcome-text { 
+        font-size: 1.1rem; 
+      }
+    }
+    
     @media (max-width: 992px) {
       .chiplet-interactive {
         width: 480px;
@@ -431,11 +450,344 @@
       .core3 { left: 72px; bottom: 72px; }
       .core4 { right: 72px; bottom: 72px; }
       
-      .welcome-text { font-size: 0.96rem; }
-      h1 { font-size: 1.8rem; }
-      .content-display { padding: 18px; }
-      .content-display h2 { font-size: 1.56rem; }
-      .content-display h3 { font-size: 1.32rem; }
+      .welcome-text { 
+        font-size: 0.96rem; 
+      }
+      
+      h1 { 
+        font-size: 1.8rem; 
+      }
+      
+      .content-display { 
+        padding: 18px; 
+      }
+      
+      .content-display h2 { 
+        font-size: 1.56rem; 
+      }
+      
+      .content-display h3 { 
+        font-size: 1.32rem; 
+      }
+      
+      .circuit-board {
+        width: 600px;
+        height: 500px;
+      }
+      
+      .title-label {
+        font-size: 17px;
+        top: -32px;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      body {
+        padding: 12px;
+      }
+      
+      .container {
+        padding: 12px;
+      }
+      
+      .chiplet-container {
+        height: 500px;
+        margin-top: -40px; /* More negative margin for tablets/medium mobile */
+      }
+      
+      .chiplet-interactive {
+        width: 360px;
+        height: 300px;
+        transform: perspective(1000px) rotateX(25deg) rotateZ(-10deg);
+      }
+      
+      .chiplet-center {
+        width: 110px;
+        height: 110px;
+      }
+      
+      .chiplet-core {
+        width: 65px;
+        height: 65px;
+      }
+      
+      /* Ensure four corners layout */
+      .core1 { 
+        left: 55px !important; 
+        top: 55px !important;
+        right: auto !important;
+        bottom: auto !important;
+      }
+      .core2 { 
+        right: 55px !important; 
+        top: 55px !important;
+        left: auto !important;
+        bottom: auto !important;
+      }
+      .core3 { 
+        left: 55px !important; 
+        bottom: 55px !important;
+        right: auto !important;
+        top: auto !important;
+      }
+      .core4 { 
+        right: 55px !important; 
+        bottom: 55px !important;
+        left: auto !important;
+        top: auto !important;
+      }
+      
+      .pin {
+        width: 4px;
+        height: 6px;
+      }
+      
+      .circuit-board {
+        width: 460px;
+        height: 400px;
+        top: -50px;
+        left: -50px;
+      }
+      
+      .content-display {
+        padding: 16px;
+      }
+      
+      .content-display h2 {
+        font-size: 1.4rem;
+      }
+      
+      .content-display h3 {
+        font-size: 1.2rem;
+      }
+      
+      .content-display p, .content-display li {
+        font-size: 1rem;
+      }
+      
+      .title-label {
+        font-size: 14px;
+        padding: 3px 8px;
+        top: -22px;
+        min-width: 60px;
+      }
+      
+      .chip-label {
+        font-size: 14px;
+        padding: 4px 8px;
+        min-width: 70px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      body {
+        padding: 8px;
+      }
+      
+      .container {
+        padding: 8px;
+        min-height: 90vh;
+      }
+      
+      h1 {
+        font-size: 1.5rem;
+      }
+      
+      .welcome-text {
+        font-size: 0.9rem;
+        margin: 16px 0 -5px 0; /* Reduced negative margin for better spacing */
+      }
+      
+      .chiplet-container {
+        height: 420px;
+        margin-top: -40px; /* Reduced negative margin for better spacing */
+      }
+      
+      .chiplet-interactive {
+        width: 300px;
+        height: 280px;
+        transform: perspective(800px) rotateX(25deg) rotateZ(-8deg);
+      }
+      
+      .chiplet-center {
+        width: 90px;
+        height: 90px;
+      }
+      
+      .chiplet-core {
+        width: 50px;
+        height: 50px;
+      }
+      
+      /* Ensure four corners layout */
+      .core1 { 
+        left: 45px !important; 
+        top: 45px !important;
+        right: auto !important;
+        bottom: auto !important;
+      }
+      .core2 { 
+        right: 45px !important; 
+        top: 45px !important;
+        left: auto !important;
+        bottom: auto !important;
+      }
+      .core3 { 
+        left: 45px !important; 
+        bottom: 45px !important;
+        right: auto !important;
+        top: auto !important;
+      }
+      .core4 { 
+        right: 45px !important; 
+        bottom: 45px !important;
+        left: auto !important;
+        top: auto !important;
+      }
+      
+      .circuit-board {
+        width: 380px;
+        height: 360px;
+        top: -40px;
+        left: -40px;
+      }
+      
+      .content-display {
+        padding: 12px;
+      }
+      
+      .content-display h2 {
+        font-size: 1.2rem;
+        margin-bottom: 12px;
+      }
+      
+      .content-display h3 {
+        font-size: 1rem;
+        margin-top: 12px;
+        margin-bottom: 8px;
+      }
+      
+      .content-display p, .content-display li {
+        font-size: 0.9rem;
+        margin-bottom: 12px;
+      }
+      
+      .content-display li {
+        padding-left: 18px;
+      }
+      
+      .close-button {
+        width: 30px;
+        height: 30px;
+        font-size: 18px;
+        top: 12px;
+        right: 12px;
+      }
+      
+      .title-label {
+        font-size: 12px;
+        padding: 2px 6px;
+        top: -20px;
+        min-width: 50px;
+      }
+      
+      .chip-label {
+        font-size: 11px;
+        padding: 3px 6px;
+        min-width: 60px;
+      }
+    }
+    
+    /* Smallest phone screens */
+    @media (max-width: 360px) {
+      .welcome-text {
+        margin: 10px 0 -10px 0; /* Reduced negative margin for better spacing */
+      }
+    
+      .chiplet-container {
+        margin-top: -50px; /* Reduced negative margin for better spacing */
+      }
+      
+      .chiplet-interactive {
+        width: 260px;
+        height: 240px;
+      }
+      
+      .chiplet-center {
+        width: 70px;
+        height: 70px;
+      }
+      
+      .chiplet-core {
+        width: 45px;
+        height: 45px;
+      }
+      
+      /* Ensure four corners layout */
+      .core1 { 
+        left: 35px !important; 
+        top: 35px !important;
+        right: auto !important;
+        bottom: auto !important;
+      }
+      .core2 { 
+        right: 35px !important; 
+        top: 35px !important;
+        left: auto !important;
+        bottom: auto !important;
+      }
+      .core3 { 
+        left: 35px !important; 
+        bottom: 35px !important;
+        right: auto !important;
+        top: auto !important;
+      }
+      .core4 { 
+        right: 35px !important; 
+        bottom: 35px !important;
+        left: auto !important;
+        top: auto !important;
+      }
+      
+      .circuit-board {
+        width: 340px;
+        height: 320px;
+      }
+      
+      .title-label {
+        font-size: 10px;
+        padding: 2px 4px;
+        top: -16px;
+        min-width: 40px;
+        border-width: 1px;
+      }
+      
+      .pin {
+        width: 3px;
+        height: 5px;
+      }
+    }
+    
+    /* Portrait mode specific adjustments */
+    @media screen and (orientation: portrait) {
+      .welcome-text {
+        margin-bottom: -10px !important;
+      }
+      
+      .chiplet-container {
+        margin-top: -45px !important;
+      }
+    }
+    
+    /* Portrait + small screen combination */
+    @media screen and (orientation: portrait) and (max-width: 480px) {
+      .welcome-text {
+        margin-bottom: -15px !important;
+      }
+      
+      .chiplet-container {
+        margin-top: -60px !important;
+      }
     }
     
     /* ===========================
@@ -575,66 +927,7 @@
         </div>
         
         <div id="pins-container">
-          <!-- Top pins -->
-          <div class="pin" style="left: 144px; top: 36px;"></div>
-          <div class="pin" style="left: 168px; top: 36px;"></div>
-          <div class="pin" style="left: 192px; top: 36px;"></div>
-          <div class="pin" style="left: 216px; top: 36px;"></div>
-          <div class="pin" style="left: 240px; top: 36px;"></div>
-          <div class="pin" style="left: 264px; top: 36px;"></div>
-          <div class="pin" style="left: 288px; top: 36px;"></div>
-          <div class="pin" style="left: 312px; top: 36px;"></div>
-          <div class="pin" style="left: 336px; top: 36px;"></div>
-          <div class="pin" style="left: 360px; top: 36px;"></div>
-          <div class="pin" style="left: 384px; top: 36px;"></div>
-          <div class="pin" style="left: 408px; top: 36px;"></div>
-          <div class="pin" style="left: 432px; top: 36px;"></div>
-          <div class="pin" style="left: 456px; top: 36px;"></div>
-          <div class="pin" style="left: 480px; top: 36px;"></div>
-          
-          <!-- Left pins -->
-          <div class="pin" style="left: 36px; top: 72px;"></div>
-          <div class="pin" style="left: 36px; top: 96px;"></div>
-          <div class="pin" style="left: 36px; top: 120px;"></div>
-          <div class="pin" style="left: 36px; top: 144px;"></div>
-          <div class="pin" style="left: 36px; top: 168px;"></div>
-          <div class="pin" style="left: 36px; top: 192px;"></div>
-          <div class="pin" style="left: 36px; top: 216px;"></div>
-          <div class="pin" style="left: 36px; top: 240px;"></div>
-          <div class="pin" style="left: 36px; top: 264px;"></div>
-          <div class="pin" style="left: 36px; top: 288px;"></div>
-          <div class="pin" style="left: 36px; top: 312px;"></div>
-          <div class="pin" style="left: 36px; top: 336px;"></div>
-          <div class="pin" style="left: 36px; top: 360px;"></div>
-          <div class="pin" style="left: 36px; top: 384px;"></div>
-          <div class="pin" style="left: 36px; top: 408px;"></div>
-          <div class="pin" style="left: 36px; top: 432px;"></div>
-          
-          <!-- Right pins -->
-          <div class="pin" style="right: 36px; top: 120px;"></div>
-          <div class="pin" style="right: 36px; top: 168px;"></div>
-          <div class="pin" style="right: 36px; top: 216px;"></div>
-          <div class="pin" style="right: 36px; top: 264px;"></div>
-          <div class="pin" style="right: 36px; top: 312px;"></div>
-          <div class="pin" style="right: 36px; top: 360px;"></div>
-          <div class="pin" style="right: 36px; top: 408px;"></div>
-          
-          <!-- Bottom pins -->
-          <div class="pin" style="left: 144px; bottom: 36px;"></div>
-          <div class="pin" style="left: 168px; bottom: 36px;"></div>
-          <div class="pin" style="left: 192px; bottom: 36px;"></div>
-          <div class="pin" style="left: 216px; bottom: 36px;"></div>
-          <div class="pin" style="left: 240px; bottom: 36px;"></div>
-          <div class="pin" style="left: 264px; bottom: 36px;"></div>
-          <div class="pin" style="left: 288px; bottom: 36px;"></div>
-          <div class="pin" style="left: 312px; bottom: 36px;"></div>
-          <div class="pin" style="left: 336px; bottom: 36px;"></div>
-          <div class="pin" style="left: 360px; bottom: 36px;"></div>
-          <div class="pin" style="left: 384px; bottom: 36px;"></div>
-          <div class="pin" style="left: 408px; bottom: 36px;"></div>
-          <div class="pin" style="left: 432px; bottom: 36px;"></div>
-          <div class="pin" style="left: 456px; bottom: 36px;"></div>
-          <div class="pin" style="left: 480px; bottom: 36px;"></div>
+          <!-- Pins will be generated dynamically via JavaScript -->
         </div>
         
         <!-- Content displays for each component -->
@@ -722,8 +1015,6 @@
         <div class="content-display" id="cpu-content">
           <button class="close-button" onclick="closeContent('cpu-core')">×</button>
           <h2>PROFILE</h2>
-          <div class="profile-section">
-            <img src="IMG_0214.jpg" alt="Roshan Wariar" class="profile-photo">
           <p>Physical design engineer with 4+ years of experience in high-performance, low-power CPU block implementation. Passionate about merging device physics with computer architecture for energy-efficient computing.</p>
           <h3>CONTACT INFORMATION</h3>
           <p>roshan.wariar@gmail.com | 763.639.6019</p>
@@ -731,8 +1022,7 @@
       </div>
     </div>
   </div>
-
-    
+  
   <script>
     // Wait for DOM to be fully loaded
     document.addEventListener('DOMContentLoaded', function() {
@@ -743,17 +1033,251 @@
       const ioCore = document.getElementById('io-core');
       const npuCore = document.getElementById('npu-core');
       const cpuCore = document.getElementById('cpu-core');
-      const pins = document.querySelectorAll('.pin');
+      const pinsContainer = document.getElementById('pins-container');
       const labels = document.querySelectorAll('.title-label, .chip-label');
       
+      // Function to generate pins based on screen size
+      function generatePins() {
+        // Clear existing pins
+        pinsContainer.innerHTML = '';
+        
+        // Determine pin counts and spacing based on screen size
+        const sisMobile = window.innerWidth <= 768;
+        const isVerySmall = window.innerWidth <= 480;
+        const isTiny = window.innerWidth <= 360;
+        
+        let topPinCount, sidePinCount, pinEdgeDistance, pinSpacing;
+        
+        if (isTiny) {
+          topPinCount = 7;
+          sidePinCount = 5;
+          pinEdgeDistance = 22;
+          pinSpacing = 18;
+        } else if (isVerySmall) {
+          topPinCount = 8;
+          sidePinCount = 6;
+          pinEdgeDistance = 25;
+          pinSpacing = 20;
+        } else if (isMobile) {
+          topPinCount = 10;
+          sidePinCount = 8;
+          pinEdgeDistance = 30;
+          pinSpacing = 24;
+        } else if (window.innerWidth <= 992) {
+          topPinCount = 12;
+          sidePinCount = 10;
+          pinEdgeDistance = 36;
+          pinSpacing = 30;
+        } else {
+          topPinCount = 15;
+          sidePinCount = 16;
+          pinEdgeDistance = 36;
+          pinSpacing = 24;
+        }
+        
+        // Get chiplet dimensions for calculations
+        const chipletWidth = parseFloat(getComputedStyle(chiplet).width);
+        const chipletHeight = parseFloat(getComputedStyle(chiplet).height);
+        
+        // Start positions for pins (more offset for smaller screens)
+        const startXPercent = isTiny ? 0.27 : (isVerySmall ? 0.24 : (isMobile ? 0.22 : 0.20));
+        const startX = chipletWidth * startXPercent;
+        const pinWidth = chipletWidth - (startX * 2);
+        
+        // For mobile, check where the components AND their title labels are positioned to avoid overlaps
+        // These are the areas where we should avoid placing pins in mobile view
+        let avoidAreas = [];
+        if (isMobile) {
+          // Calculate the areas to avoid (the four corners with their title labels)
+          const coreSize = isTiny ? 45 : (isVerySmall ? 50 : 65);
+          const edgeDistance = isTiny ? 35 : (isVerySmall ? 45 : 55);
+          
+          // Title label heights - they appear above components
+          const titleHeight = isTiny ? 16 : (isVerySmall ? 20 : 25);
+          const titleMargin = isTiny ? 16 : (isVerySmall ? 20 : 28);
+          
+          // Define areas to avoid (left, top, right, bottom, with padding)
+          avoidAreas = [
+            // Top-left component
+            { left: edgeDistance - 10, top: edgeDistance - 10, right: edgeDistance + coreSize + 10, bottom: edgeDistance + coreSize + 10 },
+            // Top-left title
+            { left: edgeDistance - 30, top: edgeDistance - titleMargin - titleHeight, right: edgeDistance + coreSize + 30, bottom: edgeDistance },
+            
+            // Top-right component
+            { left: chipletWidth - edgeDistance - coreSize - 10, top: edgeDistance - 10, right: chipletWidth - edgeDistance + 10, bottom: edgeDistance + coreSize + 10 },
+            // Top-right title
+            { left: chipletWidth - edgeDistance - coreSize - 30, top: edgeDistance - titleMargin - titleHeight, right: chipletWidth - edgeDistance + 30, bottom: edgeDistance },
+            
+            // Bottom-left component
+            { left: edgeDistance - 10, top: chipletHeight - edgeDistance - coreSize - 10, right: edgeDistance + coreSize + 10, bottom: chipletHeight - edgeDistance + 10 },
+            // Bottom-left title
+            { left: edgeDistance - 30, top: chipletHeight - edgeDistance - coreSize - titleMargin - titleHeight, right: edgeDistance + coreSize + 30, bottom: chipletHeight - edgeDistance - coreSize - 5 },
+            
+            // Bottom-right component
+            { left: chipletWidth - edgeDistance - coreSize - 10, top: chipletHeight - edgeDistance - coreSize - 10, right: chipletWidth - edgeDistance + 10, bottom: chipletHeight - edgeDistance + 10 },
+            // Bottom-right title
+            { left: chipletWidth - edgeDistance - coreSize - 30, top: chipletHeight - edgeDistance - coreSize - titleMargin - titleHeight, right: chipletWidth - edgeDistance + 30, bottom: chipletHeight - edgeDistance - coreSize - 5 }
+          ];
+          
+          // Center component (CPU)
+          const centerSize = isTiny ? 70 : (isVerySmall ? 80 : 100);
+          const centerLeft = (chipletWidth - centerSize) / 2;
+          const centerTop = (chipletHeight - centerSize) / 2;
+          
+          // Add center component and its title to avoid areas
+          avoidAreas.push(
+            // Center component
+            { left: centerLeft - 10, top: centerTop - 10, right: centerLeft + centerSize + 10, bottom: centerTop + centerSize + 10 },
+            // Center title
+            { left: centerLeft - 20, top: centerTop - titleMargin - titleHeight, right: centerLeft + centerSize + 20, bottom: centerTop }
+          );
+        }
+        
+        // Helper function to check if a pin position would overlap with a component or title
+        function wouldOverlap(x, y) {
+          if (!isMobile) return false; // Only check in mobile view
+          
+          // Add a slight buffer for uncertainty
+          const buffer = 3;
+          
+          for (let area of avoidAreas) {
+            // Use a buffer zone to ensure no close calls
+            if (x >= (area.left - buffer) && 
+                x <= (area.right + buffer) && 
+                y >= (area.top - buffer) && 
+                y <= (area.bottom + buffer)) {
+              return true;
+            }
+          }
+          return false;
+        }
+        
+        // Create top pins
+        for (let i = 0; i < topPinCount; i++) {
+          const xPos = startX + (pinWidth * i / (topPinCount - 1));
+          // Skip this pin if it would overlap with a component in mobile view
+          if (wouldOverlap(xPos, pinEdgeDistance)) continue;
+          
+          const pin = document.createElement('div');
+          pin.className = 'pin';
+          pin.style.left = xPos + 'px';
+          pin.style.top = pinEdgeDistance + 'px';
+          pinsContainer.appendChild(pin);
+        }
+        
+        // Create left pins
+        for (let i = 0; i < sidePinCount; i++) {
+          const yPos = pinEdgeDistance + pinSpacing + i * pinSpacing;
+          // Skip this pin if it would overlap with a component in mobile view
+          if (wouldOverlap(pinEdgeDistance, yPos)) continue;
+          
+          const pin = document.createElement('div');
+          pin.className = 'pin';
+          pin.style.left = pinEdgeDistance + 'px';
+          pin.style.top = yPos + 'px';
+          pinsContainer.appendChild(pin);
+        }
+        
+        // Create right pins
+        for (let i = 0; i < sidePinCount; i++) {
+          const yPos = pinEdgeDistance + pinSpacing + i * pinSpacing;
+          // Skip this pin if it would overlap with a component in mobile view
+          if (wouldOverlap(chipletWidth - pinEdgeDistance, yPos)) continue;
+          
+          const pin = document.createElement('div');
+          pin.className = 'pin';
+          pin.style.right = pinEdgeDistance + 'px';
+          pin.style.top = yPos + 'px';
+          pinsContainer.appendChild(pin);
+        }
+        
+        // Create bottom pins
+        for (let i = 0; i < topPinCount; i++) {
+          const xPos = startX + (pinWidth * i / (topPinCount - 1));
+          // Skip this pin if it would overlap with a component in mobile view
+          if (wouldOverlap(xPos, chipletHeight - pinEdgeDistance)) continue;
+          
+          const pin = document.createElement('div');
+          pin.className = 'pin';
+          pin.style.left = xPos + 'px';
+          pin.style.bottom = pinEdgeDistance + 'px';
+          pinsContainer.appendChild(pin);
+        }
+      }
+      
+      // Function to initialize the page with correct sizes
+      function initializePage() {
+        // Generate pins for initial display
+        generatePins();
+        
+        // Cache pins after generation
+        pins = document.querySelectorAll('.pin');
+      }
+      
+      // Initialize the page on load
+      initializePage();
+      
+      // Update pins when window resizes
+      window.addEventListener('resize', function() {
+        if (document.querySelector('.content-display.active')) return; // Skip if expanded
+        generatePins();
+      });
+      
+      // Add resize event listener to handle responsive layout
+      window.addEventListener('resize', function() {
+        // Skip if expanded content is showing
+        if (document.querySelector('.content-display.active')) return;
+        
+        // Re-cache pins after regeneration (CSS handles the responsive layout)
+        pins = document.querySelectorAll('.pin');
+      });
+      
+      // Function to store current positions based on screen size
+      function getCurrentPositions() {
+        const isMobile = window.innerWidth <= 768;
+        const isVerySmall = window.innerWidth <= 480;
+        
+        // Get chiplet dimensions for proportional calculations
+        const chipletWidth = parseFloat(getComputedStyle(chiplet).width);
+        const chipletHeight = parseFloat(getComputedStyle(chiplet).height);
+        
+        // Calculate dimensions proportionally to chiplet size
+        // This ensures the layout is consistent across all screen sizes
+        const coreSize = Math.min(chipletWidth, chipletHeight) * (isVerySmall ? 0.20 : 0.22); // Core size proportional to chiplet
+        const centerSize = coreSize * 1.67; // Center is ~1.67x the size of cores
+        
+        // Calculate edge distances proportionally based on screen size
+        // This spreads out components more on smaller screens to prevent overlap
+        const edgeDistance = isVerySmall ? chipletWidth * 0.16 : (isMobile ? chipletWidth * 0.14 : chipletWidth * 0.12);
+        
+        // Convert calculations to pixel strings
+        const coreWidth = `${coreSize}px`;
+        const coreHeight = `${coreSize}px`;
+        const centerWidth = `${centerSize}px`;
+        const centerHeight = `${centerSize}px`;
+        const leftPos = `${edgeDistance}px`;
+        const rightPos = `${edgeDistance}px`;
+        const topPos = `${edgeDistance}px`;
+        const bottomPos = `${edgeDistance}px`;
+        
+        return {
+          'gpu-core': { left: leftPos, top: topPos, right: 'auto', bottom: 'auto', width: coreWidth, height: coreHeight },
+          'ram-core': { left: 'auto', top: topPos, right: rightPos, bottom: 'auto', width: coreWidth, height: coreHeight },
+          'io-core': { left: leftPos, top: 'auto', right: 'auto', bottom: bottomPos, width: coreWidth, height: coreHeight },
+          'npu-core': { left: 'auto', top: 'auto', right: rightPos, bottom: bottomPos, width: coreWidth, height: coreHeight },
+          'cpu-core': { left: '50%', top: '50%', transform: 'translate(-50%, -50%)', width: centerWidth, height: centerHeight }
+        };
+      }
+      
       // Store original positions
-      const originalPositions = {
-        'gpu-core': { left: '72px', top: '108px', right: 'auto', bottom: 'auto', width: '144px', height: '144px' },
-        'ram-core': { left: 'auto', top: '108px', right: '72px', bottom: 'auto', width: '144px', height: '144px' },
-        'io-core': { left: '72px', top: 'auto', right: 'auto', bottom: '108px', width: '144px', height: '144px' },
-        'npu-core': { left: 'auto', top: 'auto', right: '72px', bottom: '108px', width: '144px', height: '144px' },
-        'cpu-core': { left: '50%', top: '50%', transform: 'translate(-50%, -50%)', width: '240px', height: '240px' }
-      };
+      let originalPositions = getCurrentPositions();
+      
+      // Function to reset chiplet styles based on current screen size
+      // Not used now - we're using CSS media queries for responsive design
+      function resetChipletStyles() {
+        // We'll let CSS handle the responsive layout
+        return;
+      }
       
       // Array for chip parts
       const chipletParts = [gpuCore, ramCore, ioCore, npuCore, cpuCore];
@@ -784,8 +1308,14 @@
       
       // Function to expand chiplet and show content
       function expandChiplet(chipletPart, componentType) {
-        // Rotate chiplet to flat view
-        chiplet.style.transform = 'perspective(1440px) rotateX(0deg) rotateZ(0deg)';
+        // Determine if we're on mobile
+        const isMobile = window.innerWidth <= 768;
+        
+        // Rotate chiplet to flat view (less rotation on mobile)
+        chiplet.style.transform = isMobile 
+          ? 'perspective(1000px) rotateX(10deg) rotateZ(0deg)' 
+          : 'perspective(1440px) rotateX(0deg) rotateZ(0deg)';
+          
         setTimeout(() => {
           // Hide non-clicked parts, pins, and labels
           chipletParts.forEach(part => { if (part !== chipletPart) { part.style.opacity = '0'; part.style.pointerEvents = 'none'; } });
@@ -802,37 +1332,69 @@
           chipletPart.style.border = '2px solid #FFD700';
           chipletPart.style.zIndex = '999';
           
-          if (chipletPart.id === 'cpu-core') {
-            chipletPart.style.width = '80%';
-            chipletPart.style.height = '80%';
-            chipletPart.style.left = '50%';
-            chipletPart.style.top = '50%';
-            chipletPart.style.transform = 'translate(-50%, -50%)';
+          // Different expansion behavior for mobile vs desktop
+          if (window.innerWidth <= 768) { 
+            // Mobile behavior: content expands to fill chiplet
+            chiplet.style.backgroundColor = '#000000';
+            
+            // Hide the actual component
+            chipletPart.style.opacity = '0';
+            
+            // The content will be displayed on top of the chiplet
+            setTimeout(() => {
+              const contentElement = document.getElementById(`${componentType}-content`);
+              if (contentElement) {
+                contentElement.style.position = 'absolute';
+                contentElement.style.top = '0';
+                contentElement.style.left = '0';
+                contentElement.style.width = '100%';
+                contentElement.style.height = '100%';
+                contentElement.style.zIndex = '2000';
+                contentElement.style.display = 'block';
+                
+                setTimeout(() => {
+                  contentElement.style.opacity = '1';
+                  contentElement.classList.add('active');
+                }, 50);
+              }
+            }, 600);
           } else {
-            chipletPart.style.width = '80%';
-            chipletPart.style.height = '80%';
-            chipletPart.style.top = '10%';
-            if (chipletPart.id === 'gpu-core' || chipletPart.id === 'io-core') {
-              chipletPart.style.left = '10%';
-              chipletPart.style.right = 'auto';
+            // Desktop behavior (unchanged)
+            if (chipletPart.id === 'cpu-core') {
+              chipletPart.style.width = '80%';
+              chipletPart.style.height = '80%';
+              chipletPart.style.left = '50%';
+              chipletPart.style.top = '50%';
+              chipletPart.style.transform = 'translate(-50%, -50%)';
             } else {
-              chipletPart.style.right = '10%';
-              chipletPart.style.left = 'auto';
+              chipletPart.style.width = '80%';
+              chipletPart.style.height = '80%';
+              chipletPart.style.top = '10%';
+              if (chipletPart.id === 'gpu-core' || chipletPart.id === 'io-core') {
+                chipletPart.style.left = '10%';
+                chipletPart.style.right = 'auto';
+              } else {
+                chipletPart.style.right = '10%';
+                chipletPart.style.left = 'auto';
+              }
+              chipletPart.style.transform = 'none';
             }
-            chipletPart.style.transform = 'none';
+            
+            // Original content display for desktop
+            setTimeout(() => {
+              const contentElement = document.getElementById(`${componentType}-content`);
+              if (contentElement) {
+                contentElement.style.display = 'block';
+                setTimeout(() => {
+                  contentElement.style.opacity = '1';
+                  contentElement.classList.add('active');
+                }, 50);
+              }
+            }, 800);
           }
           
-          setTimeout(() => {
-            const contentElement = document.getElementById(`${componentType}-content`);
-            if (contentElement) {
-              contentElement.style.display = 'block';
-              setTimeout(() => {
-                contentElement.style.opacity = '1';
-                contentElement.classList.add('active');
-              }, 50);
-            }
-          }, 800);
-        }, 600);
+          // Content is now displayed in the conditional block above
+        }, isMobile ? 400 : 600);
       }
       
       // Function to close content and restore chiplet state
@@ -842,45 +1404,120 @@
         activeContent.style.opacity = '0';
         activeContent.classList.remove('active');
         
+        // Determine if we're on mobile
+        const isMobile = window.innerWidth <= 768;
+        const isVerySmall = window.innerWidth <= 480;
+        
         const expandedPart = document.getElementById(coreId);
         if (expandedPart) {
           setTimeout(() => {
-            expandedPart.style.width = originalPositions[coreId].width;
-            expandedPart.style.height = originalPositions[coreId].height;
-            expandedPart.style.left = originalPositions[coreId].left;
-            expandedPart.style.top = originalPositions[coreId].top;
-            expandedPart.style.right = originalPositions[coreId].right;
-            expandedPart.style.bottom = originalPositions[coreId].bottom;
-            if (coreId === 'cpu-core') {
-              expandedPart.style.transform = originalPositions[coreId].transform;
-            } else {
-              expandedPart.style.transform = 'none';
-            }
+            // Reset styles - remove any inline styles from the expanded view
+            expandedPart.removeAttribute('style');
+            
+            // Reset background color and border
             expandedPart.style.backgroundColor = '#000000';
             expandedPart.style.border = '2px solid rgba(255,255,255,0.8)';
             expandedPart.style.zIndex = 'auto';
             
+            // For the CPU core in the center, we need to re-apply the transform
+            if (coreId === 'cpu-core') {
+              expandedPart.style.transform = 'translate(-50%, -50%)';
+            }
+            
+            // Show all components, hide all chip labels
             chipletParts.forEach(part => {
               part.style.opacity = '1';
               part.style.pointerEvents = 'auto';
               const chipLabel = part.querySelector('.chip-label');
               if (chipLabel) chipLabel.style.opacity = '0';
             });
+            
+            // Show labels and pins
             document.querySelectorAll('.title-label').forEach(label => label.style.opacity = '1');
             pins.forEach(pin => pin.style.opacity = '1');
             
+            // Reset chiplet background
             chiplet.style.backgroundColor = '#4DAF7C';
             chiplet.style.boxShadow = '0 36px 36px rgba(0,0,0,0.2)';
             activeContent.style.display = 'none';
             
             setTimeout(() => {
-              chiplet.style.transform = 'perspective(1440px) rotateX(30deg) rotateZ(-10deg)';
+              // Apply appropriate transform based on screen size (via CSS)
+              chiplet.style.removeProperty('transform');
+              
+              // Apply the transform based on screen size
+              if (isVerySmall) {
+                chiplet.style.transform = 'perspective(800px) rotateX(25deg) rotateZ(-8deg)';
+              } else if (isMobile) {
+                chiplet.style.transform = 'perspective(1000px) rotateX(25deg) rotateZ(-10deg)';
+              } else {
+                chiplet.style.transform = 'perspective(1440px) rotateX(30deg) rotateZ(-10deg)';
+              }
+              
+              // Mobile-specific pin regeneration with proper positioning
+              setTimeout(() => {
+                if (window.innerWidth <= 768) {
+                  // For mobile: clear pins first
+                  pinsContainer.innerHTML = '';
+                  // Then regenerate pins after a longer delay to ensure proper component positioning
+                  // and title labels are fully restored
+                  setTimeout(() => {
+                    generatePins();
+                    pins = document.querySelectorAll('.pin');
+                    
+                    // Add another check to remove any pins that might still overlap
+                    setTimeout(() => {
+                      // Get all current component positions
+                      const components = document.querySelectorAll('.chiplet-part');
+                      const titleLabels = document.querySelectorAll('.title-label');
+                      
+                      // Check each pin against all components and title labels
+                      pins.forEach(pin => {
+                        const pinRect = pin.getBoundingClientRect();
+                        
+                        // Check if this pin overlaps with any component
+                        let shouldRemove = false;
+                        
+                        components.forEach(comp => {
+                          const compRect = comp.getBoundingClientRect();
+                          if (rectsOverlap(pinRect, compRect, 5)) {
+                            shouldRemove = true;
+                          }
+                        });
+                        
+                        // Check if this pin overlaps with any title label
+                        titleLabels.forEach(label => {
+                          const labelRect = label.getBoundingClientRect();
+                          if (rectsOverlap(pinRect, labelRect, 5)) {
+                            shouldRemove = true;
+                          }
+                        });
+                        
+                        if (shouldRemove) {
+                          pin.remove();
+                        }
+                      });
+                    }, 100);
+                  }, 300);
+                } else {
+                  // Desktop behavior unchanged
+                  generatePins();
+                  pins = document.querySelectorAll('.pin');
+                }
+              }, 300);
+              
+              // Helper function to check if two rectangles overlap
+              function rectsOverlap(rect1, rect2, buffer = 0) {
+                return !(rect1.right < rect2.left - buffer || 
+                         rect1.left > rect2.right + buffer || 
+                         rect1.bottom < rect2.top - buffer || 
+                         rect1.top > rect2.bottom + buffer);
+              }
             }, 300);
-          }, 500);
+          }, isMobile ? 300 : 500);
         }
       };
     });
   </script>
 </body>
 </html>
-

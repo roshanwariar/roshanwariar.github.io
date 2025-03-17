@@ -230,6 +230,19 @@
       white-space: nowrap;
       min-width: 96px;
     }
+
+    .profile-photo {
+  width: 75%;                /* Takes 75% of the container width */
+  max-width: 150px;          /* But never larger than 150px */
+  height: auto;              /* Maintain aspect ratio */
+  aspect-ratio: 1/1;         /* Keep it square */
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #FFD700;
+  margin: 10px auto;
+  display: block;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+}
     
     .core1 .title-label { color: #FF5733; }
     .core2 .title-label { color: #33A1FF; }
@@ -718,7 +731,8 @@
       </div>
     </div>
   </div>
-  
+
+    
   <script>
     // Wait for DOM to be fully loaded
     document.addEventListener('DOMContentLoaded', function() {

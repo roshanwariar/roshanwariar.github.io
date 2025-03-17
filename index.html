@@ -1,0 +1,1513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Interactive CPU Chiplet Design | Roshan Wariar</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&display=swap');
+    @import url('https://fonts.cdnjs.com/css?family=Aceh');
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Aceh', 'Avenir Next', 'Montserrat', sans-serif;
+      text-transform: lowercase;
+      font-weight: bold;
+      -webkit-tap-highlight-color: transparent; /* Remove mobile tap highlight */
+    }
+    
+    body {
+      background-color: #FFFFFF;
+      padding: 24px;
+      perspective: 1200px;
+      color: #000000;
+      line-height: 1.5;
+    }
+    
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+      background-color: #FFFFFF;
+      border-radius: 0px;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+      padding: 24px;
+      padding-bottom: 24px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      min-height: 80vh;
+      border: 2px solid #000000;
+      position: relative;
+    }
+    
+    header {
+      text-align: center;
+      padding: 24px 0 0 0;
+      margin-bottom: 0;
+      border-bottom: 1px solid #000000;
+    }
+    
+    h1 {
+      color: #000000;
+      margin-bottom: 12px;
+      font-size: 2.4rem;
+      letter-spacing: 5px;
+      font-weight: 700;
+      opacity: 0;
+      -webkit-animation: fadeInSimple 1s ease forwards;
+      animation: fadeInSimple 1s ease forwards;
+      -webkit-animation-delay: 0.5s;
+      animation-delay: 0.5s;
+    }
+    
+    .welcome-text {
+      text-align: center;
+      margin: 24px 0 12px 0;
+      font-size: 1.2rem;
+      line-height: 1.8;
+      padding: 0 24px;
+      letter-spacing: 1px;
+      font-weight: 700;
+      color: #000000;
+      opacity: 0;
+      -webkit-animation: fadeInSimple 1s ease forwards;
+      animation: fadeInSimple 1s ease forwards;
+      -webkit-animation-delay: 1s;
+      animation-delay: 1s;
+    }
+    
+    .chiplet-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      height: 600px;
+      margin: 0 auto;
+      margin-top: -30px; /* Default negative margin */
+    }
+    
+    .chiplet-interactive {
+      position: relative;
+      width: 672px;
+      height: 540px;
+      margin: 0 auto;
+      background: #4DAF7C;
+      border-radius: 0px;
+      border: 6px solid #FFFFFF;
+      border-style: double;
+      overflow: visible;
+      /* 3D transform to match screenshot */
+      -webkit-transform: perspective(1440px) rotateX(30deg) rotateZ(-10deg);
+      transform: perspective(1440px) rotateX(30deg) rotateZ(-10deg);
+      box-shadow: 0 36px 36px rgba(0,0,0,0.2);
+      transition: all 0.8s ease;
+      will-change: transform, opacity;
+      opacity: 0;
+      -webkit-animation: fadeInOpacity 1s ease forwards;
+      animation: fadeInOpacity 1s ease forwards;
+      -webkit-animation-delay: 1.5s;
+      animation-delay: 1.5s;
+    }
+    
+    .chiplet-part {
+      position: absolute;
+      border-radius: 0px;
+      cursor: pointer;
+      -webkit-transition: all 0.5s ease;
+      -moz-transition: all 0.5s ease;
+      -ms-transition: all 0.5s ease;
+      transition: all 0.5s ease;
+      box-shadow: inset 0px 0px 18px rgba(255,255,255,0.3);
+      border: 2px solid rgba(255,255,255,0.8);
+      -webkit-transform-style: preserve-3d;
+      -moz-transform-style: preserve-3d;
+      transform-style: preserve-3d;
+      overflow: visible;
+      z-index: 5; /* Higher z-index to ensure visibility */
+      /* Better Safari support */
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      /* Make sure Safari properly registers click events */
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
+    }
+    
+    .chiplet-part:active {
+      transform: scale(0.95);
+      background-image: linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000), 
+                        linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000);
+      background-size: 12px 12px;
+      background-position: 0 0, 6px 6px;
+    }
+    
+    .chiplet-core {
+      width: 144px;
+      height: 144px;
+      background-color: #000000;
+      box-shadow: 0 12px 36px rgba(0,0,0,0.2);
+      border: 2px solid #FFFFFF;
+    }
+    
+    .chiplet-center {
+      width: 240px;
+      height: 240px;
+      left: 50%;
+      top: 50%;
+      -webkit-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);
+      background-color: #333333;
+      box-shadow: 0 18px 42px rgba(0,0,0,0.2);
+      background-image: repeating-linear-gradient(0deg, #444444, #444444 1px, transparent 1px, transparent 10px);
+    }
+    
+    .chiplet-part:not(.chiplet-center):hover {
+      transform: scale(1.1);
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.4), inset 0px 0px 18px rgba(255,255,255,0.5);
+      border-color: rgba(255,255,255,1);
+      background-color: #000000;
+      z-index: 10;
+    }
+    
+    .chiplet-center:hover {
+      background-color: #444444;
+      -webkit-transform: translate(-50%, -50%) scale(1.1);
+      transform: translate(-50%, -50%) scale(1.1);
+      box-shadow: 0 30px 54px rgba(0, 0, 0, 0.3), inset 0px 0px 18px rgba(100,100,100,0.5);
+      border-color: rgba(255,255,255,1);
+      background-image: repeating-linear-gradient(0deg, #555555, #555555 2px, transparent 2px, transparent 10px);
+      z-index: 10;
+    }
+    
+    /* Default core positions for larger screens */
+    /* Base positions for cores (4 corners) */
+    .core1 {
+      left: 72px;
+      top: 108px;
+      right: auto;
+      bottom: auto;
+      position: absolute;
+    }
+    
+    .core2 {
+      left: auto;
+      top: 108px;
+      right: 72px;
+      bottom: auto;
+      position: absolute;
+    }
+    
+    .core3 {
+      left: 72px;
+      top: auto;
+      right: auto;
+      bottom: 108px;
+      position: absolute;
+    }
+    
+    .core4 {
+      left: auto;
+      top: auto;
+      right: 72px;
+      bottom: 108px;
+      position: absolute;
+    }
+    
+    .pin {
+      width: 5px;
+      height: 8px;
+      background-color: #FFD700;
+      border-radius: 0;
+      position: absolute;
+      transition: opacity 0.5s ease;
+    }
+    
+    .circuit-board {
+      position: absolute;
+      top: -60px;
+      left: -60px;
+      width: 792px;
+      height: 660px;
+      background: #3CB371;
+      z-index: -10;
+      -webkit-transform: translateZ(-36px);
+      transform: translateZ(-36px);
+      box-shadow: 0 54px 54px rgba(0,0,0,0.1);
+      transition: all 0.8s ease;
+    }
+    
+    .title-label {
+      position: absolute;
+      top: -36px;
+      left: 50%;
+      -webkit-transform: translateX(-50%);
+      transform: translateX(-50%);
+      text-align: center;
+      font-weight: 700;
+      font-size: 19px;
+      letter-spacing: 1px;
+      z-index: 50;
+      background-color: #000000;
+      padding: 6px 18px;
+      border: 2px solid #FFD700;
+      white-space: nowrap;
+      min-width: 96px;
+      transition: all 0.3s ease; /* Smooth transition for size changes */
+    }
+    
+    .core1 .title-label { color: #FF5733; }
+    .core2 .title-label { color: #33A1FF; }
+    .core3 .title-label { color: #FF33A1; }
+    .core4 .title-label { color: #33FF57; }
+    .chiplet-center .title-label {
+      color: #FFD700;
+      top: -48px;
+    }
+    
+    .chip-label {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      -webkit-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);
+      min-width: 96px;
+      padding: 5px 14px;
+      background-color: #000000;
+      color: #FFD700;
+      text-align: center;
+      font-weight: 700;
+      font-size: 17px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+      z-index: 500;
+      border: 2px solid #FFD700;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.5);
+      white-space: nowrap;
+    }
+    
+    .chiplet-part:hover .chip-label {
+      opacity: 1 !important;
+      display: block !important;
+    }
+    
+    .grid-pattern, .noise-pattern {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    
+    .content-display {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #000000;
+      color: #FFFFFF;
+      padding: 36px;
+      opacity: 0;
+      display: none;
+      z-index: 1000;
+      overflow: auto;
+      -webkit-transition: opacity 0.5s ease;
+      -moz-transition: opacity 0.5s ease;
+      -ms-transition: opacity 0.5s ease;
+      transition: opacity 0.5s ease;
+      border: 2px solid #FFD700;
+      -webkit-transform-origin: center center;
+      -moz-transform-origin: center center;
+      -ms-transform-origin: center center;
+      transform-origin: center center;
+      /* Fix for Safari */
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+    }
+    
+    .content-display h2 {
+      color: #FFD700;
+      font-size: 2.16rem;
+      margin-bottom: 18px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      border-bottom: 1px solid #FFD700;
+      padding-bottom: 12px;
+    }
+    
+    .content-display h3 {
+      color: #FFFFFF;
+      font-size: 1.56rem;
+      margin-top: 18px;
+      margin-bottom: 12px;
+      letter-spacing: 1px;
+    }
+    
+    .content-display p {
+      color: #CCCCCC;
+      margin-bottom: 18px;
+      line-height: 1.6;
+      font-weight: normal;
+      font-size: 1.2em;
+    }
+    
+    .content-display ul {
+      list-style-type: none;
+      margin-left: 0;
+      padding-left: 0;
+      margin-bottom: 18px;
+    }
+    
+    .content-display li {
+      position: relative;
+      padding-left: 24px;
+      margin-bottom: 10px;
+      color: #CCCCCC;
+      font-weight: normal;
+      font-size: 1.2em;
+    }
+    
+    .content-display li:before {
+      content: ">";
+      position: absolute;
+      left: 0;
+      color: #FFD700;
+      font-weight: bold;
+    }
+    
+    .tech-stack {
+      display: flex;
+      flex-wrap: wrap;
+      margin-top: 14px;
+      margin-bottom: 24px;
+    }
+    
+    .tech-item {
+      background-color: #333333;
+      color: #FFFFFF;
+      padding: 5px 10px;
+      margin-right: 10px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+      font-size: 1.08rem;
+      border: 1px solid #555555;
+    }
+    
+    .close-button {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      background-color: transparent;
+      color: #FFD700;
+      border: 2px solid #FFD700;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .close-button:hover {
+      background-color: #FFD700;
+      color: #000000;
+    }
+    
+    .chiplet-expanded {
+      background-color: #000000 !important;
+      transform: none;
+      box-shadow: 0 0 0 transparent;
+      border: 2px solid #FFD700;
+      z-index: 999;
+    }
+    
+    .hide-elements {
+      opacity: 0;
+      pointer-events: none;
+    }
+    
+    /* Responsive breakpoints */
+    @media (max-width: 1200px) {
+      .chiplet-interactive {
+        width: 560px;
+        height: 450px;
+      }
+      
+      .circuit-board {
+        width: 680px;
+        height: 570px;
+      }
+      
+      .welcome-text { 
+        font-size: 1.1rem; 
+      }
+    }
+    
+    @media (max-width: 992px) {
+      .chiplet-interactive {
+        width: 480px;
+        height: 384px;
+      }
+      
+      .chiplet-center {
+        width: 144px;
+        height: 144px;
+      }
+      
+      .chiplet-core {
+        width: 96px;
+        height: 96px;
+      }
+      
+      .core1 { left: 72px; top: 72px; }
+      .core2 { right: 72px; top: 72px; }
+      .core3 { left: 72px; bottom: 72px; }
+      .core4 { right: 72px; bottom: 72px; }
+      
+      .welcome-text { 
+        font-size: 0.96rem; 
+      }
+      
+      h1 { 
+        font-size: 1.8rem; 
+      }
+      
+      .content-display { 
+        padding: 18px; 
+      }
+      
+      .content-display h2 { 
+        font-size: 1.56rem; 
+      }
+      
+      .content-display h3 { 
+        font-size: 1.32rem; 
+      }
+      
+      .circuit-board {
+        width: 600px;
+        height: 500px;
+      }
+      
+      .title-label {
+        font-size: 17px;
+        top: -32px;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      body {
+        padding: 12px;
+      }
+      
+      .container {
+        padding: 12px;
+      }
+      
+      .chiplet-container {
+        height: 500px;
+        margin-top: -40px; /* More negative margin for tablets/medium mobile */
+      }
+      
+      .chiplet-interactive {
+        width: 360px;
+        height: 300px;
+        transform: perspective(1000px) rotateX(25deg) rotateZ(-10deg);
+      }
+      
+      .chiplet-center {
+        width: 110px;
+        height: 110px;
+      }
+      
+      .chiplet-core {
+        width: 65px;
+        height: 65px;
+      }
+      
+      /* Ensure four corners layout */
+      .core1 { 
+        left: 55px !important; 
+        top: 55px !important;
+        right: auto !important;
+        bottom: auto !important;
+      }
+      .core2 { 
+        right: 55px !important; 
+        top: 55px !important;
+        left: auto !important;
+        bottom: auto !important;
+      }
+      .core3 { 
+        left: 55px !important; 
+        bottom: 55px !important;
+        right: auto !important;
+        top: auto !important;
+      }
+      .core4 { 
+        right: 55px !important; 
+        bottom: 55px !important;
+        left: auto !important;
+        top: auto !important;
+      }
+      
+      .pin {
+        width: 4px;
+        height: 6px;
+      }
+      
+      .circuit-board {
+        width: 460px;
+        height: 400px;
+        top: -50px;
+        left: -50px;
+      }
+      
+      .content-display {
+        padding: 16px;
+      }
+      
+      .content-display h2 {
+        font-size: 1.4rem;
+      }
+      
+      .content-display h3 {
+        font-size: 1.2rem;
+      }
+      
+      .content-display p, .content-display li {
+        font-size: 1rem;
+      }
+      
+      .title-label {
+        font-size: 14px;
+        padding: 3px 8px;
+        top: -22px;
+        min-width: 60px;
+      }
+      
+      .chip-label {
+        font-size: 14px;
+        padding: 4px 8px;
+        min-width: 70px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      body {
+        padding: 8px;
+      }
+      
+      .container {
+        padding: 8px;
+        min-height: 90vh;
+      }
+      
+      h1 {
+        font-size: 1.5rem;
+      }
+      
+      .welcome-text {
+        font-size: 0.9rem;
+        margin: 16px 0 -5px 0; /* Reduced negative margin for better spacing */
+      }
+      
+      .chiplet-container {
+        height: 420px;
+        margin-top: -40px; /* Reduced negative margin for better spacing */
+      }
+      
+      .chiplet-interactive {
+        width: 300px;
+        height: 280px;
+        transform: perspective(800px) rotateX(25deg) rotateZ(-8deg);
+      }
+      
+      .chiplet-center {
+        width: 90px;
+        height: 90px;
+      }
+      
+      .chiplet-core {
+        width: 50px;
+        height: 50px;
+      }
+      
+      /* Ensure four corners layout */
+      .core1 { 
+        left: 45px !important; 
+        top: 45px !important;
+        right: auto !important;
+        bottom: auto !important;
+      }
+      .core2 { 
+        right: 45px !important; 
+        top: 45px !important;
+        left: auto !important;
+        bottom: auto !important;
+      }
+      .core3 { 
+        left: 45px !important; 
+        bottom: 45px !important;
+        right: auto !important;
+        top: auto !important;
+      }
+      .core4 { 
+        right: 45px !important; 
+        bottom: 45px !important;
+        left: auto !important;
+        top: auto !important;
+      }
+      
+      .circuit-board {
+        width: 380px;
+        height: 360px;
+        top: -40px;
+        left: -40px;
+      }
+      
+      .content-display {
+        padding: 12px;
+      }
+      
+      .content-display h2 {
+        font-size: 1.2rem;
+        margin-bottom: 12px;
+      }
+      
+      .content-display h3 {
+        font-size: 1rem;
+        margin-top: 12px;
+        margin-bottom: 8px;
+      }
+      
+      .content-display p, .content-display li {
+        font-size: 0.9rem;
+        margin-bottom: 12px;
+      }
+      
+      .content-display li {
+        padding-left: 18px;
+      }
+      
+      .close-button {
+        width: 30px;
+        height: 30px;
+        font-size: 18px;
+        top: 12px;
+        right: 12px;
+      }
+      
+      .title-label {
+        font-size: 12px;
+        padding: 2px 6px;
+        top: -20px;
+        min-width: 50px;
+      }
+      
+      .chip-label {
+        font-size: 11px;
+        padding: 3px 6px;
+        min-width: 60px;
+      }
+    }
+    
+    /* Smallest phone screens */
+    @media (max-width: 360px) {
+      .welcome-text {
+        margin: 10px 0 -10px 0; /* Reduced negative margin for better spacing */
+      }
+    
+      .chiplet-container {
+        margin-top: -50px; /* Reduced negative margin for better spacing */
+      }
+      
+      .chiplet-interactive {
+        width: 260px;
+        height: 240px;
+      }
+      
+      .chiplet-center {
+        width: 70px;
+        height: 70px;
+      }
+      
+      .chiplet-core {
+        width: 45px;
+        height: 45px;
+      }
+      
+      /* Ensure four corners layout */
+      .core1 { 
+        left: 35px !important; 
+        top: 35px !important;
+        right: auto !important;
+        bottom: auto !important;
+      }
+      .core2 { 
+        right: 35px !important; 
+        top: 35px !important;
+        left: auto !important;
+        bottom: auto !important;
+      }
+      .core3 { 
+        left: 35px !important; 
+        bottom: 35px !important;
+        right: auto !important;
+        top: auto !important;
+      }
+      .core4 { 
+        right: 35px !important; 
+        bottom: 35px !important;
+        left: auto !important;
+        top: auto !important;
+      }
+      
+      .circuit-board {
+        width: 340px;
+        height: 320px;
+      }
+      
+      .title-label {
+        font-size: 10px;
+        padding: 2px 4px;
+        top: -16px;
+        min-width: 40px;
+        border-width: 1px;
+      }
+      
+      .pin {
+        width: 3px;
+        height: 5px;
+      }
+    }
+    
+    /* Portrait mode specific adjustments */
+    @media screen and (orientation: portrait) {
+      .welcome-text {
+        margin-bottom: -10px !important;
+      }
+      
+      .chiplet-container {
+        margin-top: -45px !important;
+      }
+    }
+    
+    /* Portrait + small screen combination */
+    @media screen and (orientation: portrait) and (max-width: 480px) {
+      .welcome-text {
+        margin-bottom: -15px !important;
+      }
+      
+      .chiplet-container {
+        margin-top: -60px !important;
+      }
+    }
+    
+    /* ===========================
+       Intro Animation CSS with Safari prefixes
+       =========================== */
+    
+    /* Fade in with slight upward motion */
+    @-webkit-keyframes fadeInSimple {
+      from { opacity: 0; -webkit-transform: translateY(20px); transform: translateY(20px); }
+      to { opacity: 1; -webkit-transform: translateY(0); transform: translateY(0); }
+    }
+    @keyframes fadeInSimple {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Simple opacity fade */
+    @-webkit-keyframes fadeInOpacity {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes fadeInOpacity {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    /* Generic fade in and move from an offset using custom properties */
+    @-webkit-keyframes fadeInAndAssembleGeneric {
+      from {
+        -webkit-transform: translate(var(--tx), var(--ty));
+        transform: translate(var(--tx), var(--ty));
+        opacity: 0;
+      }
+      to {
+        -webkit-transform: translate(0, 0);
+        transform: translate(0, 0);
+        opacity: 1;
+      }
+    }
+    @keyframes fadeInAndAssembleGeneric {
+      from { transform: translate(var(--tx), var(--ty)); opacity: 0; }
+      to { transform: translate(0, 0); opacity: 1; }
+    }
+    
+    /* CPU core animation (adjusting for its preset translate) */
+    @-webkit-keyframes fadeInCPU {
+      from { -webkit-transform: translate(-50%, calc(-50% - 30px)); transform: translate(-50%, calc(-50% - 30px)); opacity: 0; }
+      to { -webkit-transform: translate(-50%, -50%); transform: translate(-50%, -50%); opacity: 1; }
+    }
+    @keyframes fadeInCPU {
+      from { transform: translate(-50%, calc(-50% - 30px)); opacity: 0; }
+      to { transform: translate(-50%, -50%); opacity: 1; }
+    }
+    
+    /* Apply animations with vendor prefixes */
+    #gpu-core {
+      opacity: 0;
+      --tx: -50px;
+      --ty: -20px;
+      -webkit-animation: fadeInAndAssembleGeneric 1s ease forwards;
+      animation: fadeInAndAssembleGeneric 1s ease forwards;
+      -webkit-animation-delay: 1.6s;
+      animation-delay: 1.6s;
+    }
+    #ram-core {
+      opacity: 0;
+      --tx: 50px;
+      --ty: -20px;
+      -webkit-animation: fadeInAndAssembleGeneric 1s ease forwards;
+      animation: fadeInAndAssembleGeneric 1s ease forwards;
+      -webkit-animation-delay: 1.8s;
+      animation-delay: 1.8s;
+    }
+    #io-core {
+      opacity: 0;
+      --tx: -50px;
+      --ty: 20px;
+      -webkit-animation: fadeInAndAssembleGeneric 1s ease forwards;
+      animation: fadeInAndAssembleGeneric 1s ease forwards;
+      -webkit-animation-delay: 2s;
+      animation-delay: 2s;
+    }
+    #npu-core {
+      opacity: 0;
+      --tx: 50px;
+      --ty: 20px;
+      -webkit-animation: fadeInAndAssembleGeneric 1s ease forwards;
+      animation: fadeInAndAssembleGeneric 1s ease forwards;
+      -webkit-animation-delay: 2.2s;
+      animation-delay: 2.2s;
+    }
+    #cpu-core {
+      opacity: 0;
+      -webkit-animation: fadeInCPU 1s ease forwards;
+      animation: fadeInCPU 1s ease forwards;
+      -webkit-animation-delay: 2.4s;
+      animation-delay: 2.4s;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>roshan wariar</h1>
+    </header>
+    
+    <div class="welcome-text">
+      <p>welcome to my interactive portfolio. click on a component to explore.</p>
+    </div>
+    
+    <div class="chiplet-container">
+      <div class="circuit-board" id="circuit-board">
+        <div class="grid-pattern" id="grid-pattern"></div>
+        <div class="noise-pattern" id="noise-pattern"></div>
+      </div>
+      
+      <div class="chiplet-interactive" id="chiplet">
+        <div class="chiplet-part chiplet-core core1" id="gpu-core" data-overlay="gpu" style="left:72px;top:108px;right:auto;bottom:auto;">
+          <div class="title-label">gpu</div>
+          <div class="chip-label">experience</div>
+        </div>
+        <div class="chiplet-part chiplet-core core2" id="ram-core" data-overlay="ram" style="left:auto;top:108px;right:72px;bottom:auto;">
+          <div class="title-label">ram</div>
+          <div class="chip-label">projects</div>
+        </div>
+        <div class="chiplet-part chiplet-core core3" id="io-core" data-overlay="io" style="left:72px;bottom:108px;">
+          <div class="title-label">i/o</div>
+          <div class="chip-label">education</div>
+        </div>
+        <div class="chiplet-part chiplet-core core4" id="npu-core" data-overlay="npu" style="right:72px;bottom:108px;">
+          <div class="title-label">npu</div>
+          <div class="chip-label">skills</div>
+        </div>
+        <div class="chiplet-part chiplet-center" id="cpu-core" data-overlay="cpu">
+          <div class="title-label">cpu</div>
+          <div class="chip-label">profile</div>
+        </div>
+        
+        <div id="pins-container">
+          <!-- Pins will be generated dynamically via JavaScript -->
+        </div>
+        
+        <!-- Content displays for each component -->
+        <div class="content-display" id="gpu-content">
+          <button class="close-button">×</button>
+          <h2>EXPERIENCE</h2>
+          <h3>APPLE | CPU Implementation Engineer</h3>
+          <p>Jun 2021 – Present | Austin, TX</p>
+          <ul>
+            <li>Drive physical design for blocks on Apple's efficiency core complex in advanced technology nodes (&lt;3nm)</li>
+            <li>Provided RTL feedback, floorplanning, power and CTS customizations for high-utilization, high-frequency designs</li>
+            <li>Accomplished ECO, PDV, EMIR, and timing closure for multiple blocks</li>
+            <li>Incorporated deep learning algorithms for novel low-power design methodologies</li>
+          </ul>
+          <h3>UMN VLSI RESEARCH LAB | UG/Graduate Researcher</h3>
+          <p>Jan 2021 - Dec 2021 | Minneapolis, MN</p>
+          <ul>
+            <li>Investigated ring oscillator coupling via pass transistor logic as a novel processing mechanism</li>
+            <li>Performed HSPICE simulations and compared phase dynamics to MATLAB Kuramoto models</li>
+          </ul>
+        </div>
+        
+        <div class="content-display" id="ram-content">
+          <button class="close-button">×</button>
+          <h2>PROJECTS</h2>
+          <h3>128KB SRAM MACRO DESIGN AND LAYOUT | VLSI DESIGN I + II</h3>
+          <p>Sep 2019 - May 2021 | Minneapolis, MN</p>
+          <ul>
+            <li>Designed a compact 8-bit wordline decoder and automated layout using SKILL</li>
+            <li>Utilized logical effort for cell sizing and achieved a 346ps critical path delay</li>
+            <li>Performed 6T SRAM schematic/layout in Virtuoso with HSPICE validation</li>
+            <li>Stitched subarrays to generate a 32kb macro</li>
+          </ul>
+          <h3>SYNTHESIS OF N-STAGE RING OSCILLATOR | VLSI DESIGN II MINI PROJECT</h3>
+          <p>Jan 2021 – Feb 2021 | Minneapolis, MN</p>
+          <ul>
+            <li>Developed parameterized Verilog for a ring oscillator</li>
+            <li>Used TCL scripts and Genus commands to map the design to ASAP 7nm cellset</li>
+            <li>Optimized gate-level netlists with a Python script before APR in Innovus</li>
+          </ul>
+          <h3>SEIZURE DETECTION USING CNNs | UNDERGRADUATE SENIOR DESIGN PROJECT</h3>
+          <p>Sep 2020 - Dec 2020 | Minneapolis, MN</p>
+          <ul>
+            <li>Developed real-time seizure detection algorithm for an implantable device</li>
+            <li>Converted EEG data into image-like matrices and achieved 94% precision using PyTorch</li>
+          </ul>
+        </div>
+        
+        <div class="content-display" id="io-content">
+          <button class="close-button">×</button>
+          <h2>EDUCATION</h2>
+          <h3>UNIVERSITY OF MINNESOTA</h3>
+          <p>MASTER'S OF SCIENCE IN ELECTRICAL AND COMPUTER ENGINEERING</p>
+          <ul>
+            <li>May 2021 | Adviser: Chris H. Kim</li>
+            <li>GPA: 4.0 / 4.0</li>
+            <li>Morton S Katz Scholarship | Dean's List</li>
+          </ul>
+          <h3>UNIVERSITY OF MINNESOTA</h3>
+          <p>BACHELOR'S OF SCIENCE IN ELECTRICAL ENGINEERING</p>
+          <ul>
+            <li>Dec 2020</li>
+            <li>GPA: 3.4 / 4.0</li>
+          </ul>
+          <h3>COURSEWORK</h3>
+          <ul>
+            <li>Adv Topics in VLSI - PLL Design, VLSI Design I/II, Machine Learning I, Quantum Computing, Systems Engineering II</li>
+            <li>Undergraduate: Computer Architecture, Digital Design with FPGAs, Semiconductor Devices, AI, Advanced Analog Electronics</li>
+          </ul>
+        </div>
+        
+        <div class="content-display" id="npu-content">
+          <button class="close-button">×</button>
+          <h2>SKILLS</h2>
+          <h3>PROGRAMMING</h3>
+          <ul>
+            <li>TCL, Bash, Python, SKILL (Lisp), Verilog, MATLAB</li>
+          </ul>
+          <h3>TECHNOLOGY</h3>
+          <ul>
+            <li>Cadence Virtuoso, Genus, Innovus, Tempus, Voltus, Synopsys Verdi, PrimeTime, HSPICE, Mentor Calibre</li>
+          </ul>
+        </div>
+        
+        <div class="content-display" id="cpu-content">
+          <button class="close-button">×</button>
+          <h2>PROFILE</h2>
+          <p>Physical design engineer with 4+ years of experience in high-performance, low-power CPU block implementation. Passionate about merging device physics with computer architecture for energy-efficient computing.</p>
+          <h3>CONTACT INFORMATION</h3>
+          <p>roshan.wariar@gmail.com | 763.639.6019</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Wait for DOM to be fully loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      // Cache DOM elements
+      const chiplet = document.getElementById('chiplet');
+      const gpuCore = document.getElementById('gpu-core');
+      const ramCore = document.getElementById('ram-core');
+      const ioCore = document.getElementById('io-core');
+      const npuCore = document.getElementById('npu-core');
+      const cpuCore = document.getElementById('cpu-core');
+      const pinsContainer = document.getElementById('pins-container');
+      
+      // Get all content displays
+      const gpuContent = document.getElementById('gpu-content');
+      const ramContent = document.getElementById('ram-content');
+      const ioContent = document.getElementById('io-content');
+      const npuContent = document.getElementById('npu-content');
+      const cpuContent = document.getElementById('cpu-content');
+      
+      // Cache all chiplet parts for easier access
+      const chipletParts = [gpuCore, ramCore, ioCore, npuCore, cpuCore];
+      const contentDisplays = [gpuContent, ramContent, ioContent, npuContent, cpuContent];
+      
+      // Map component IDs to content IDs for easy reference
+      const componentContentMap = {
+        'gpu-core': 'gpu-content',
+        'ram-core': 'ram-content',
+        'io-core': 'io-content',
+        'npu-core': 'npu-content',
+        'cpu-core': 'cpu-content'
+      };
+      
+      // Initialize pins
+      let pins = [];
+      
+      // Set active state to track if a component is expanded
+      let isExpanded = false;
+      let activeComponent = null;
+      
+      // Function to generate pins around the chiplet border
+      function generatePins() {
+        // Clear any existing pins
+        pinsContainer.innerHTML = '';
+        pins = [];
+        
+        // Determine pin counts and spacing based on screen size
+        const isMobile = window.innerWidth <= 768;
+        const isVerySmall = window.innerWidth <= 480;
+        const isTiny = window.innerWidth <= 360;
+        
+        let topPinCount, sidePinCount, pinEdgeDistance, pinSpacing;
+        
+        // Set pin parameters based on screen size
+        if (isTiny) {
+          topPinCount = 7;
+          sidePinCount = 5;
+          pinEdgeDistance = 22;
+          pinSpacing = 18;
+        } else if (isVerySmall) {
+          topPinCount = 8;
+          sidePinCount = 6;
+          pinEdgeDistance = 25;
+          pinSpacing = 20;
+        } else if (isMobile) {
+          topPinCount = 10;
+          sidePinCount = 8;
+          pinEdgeDistance = 30;
+          pinSpacing = 24;
+        } else if (window.innerWidth <= 992) {
+          topPinCount = 12;
+          sidePinCount = 10;
+          pinEdgeDistance = 36;
+          pinSpacing = 30;
+        } else {
+          topPinCount = 15;
+          sidePinCount = 16;
+          pinEdgeDistance = 36;
+          pinSpacing = 24;
+        }
+        
+        // Get chiplet dimensions
+        const chipletWidth = parseFloat(getComputedStyle(chiplet).width);
+        const chipletHeight = parseFloat(getComputedStyle(chiplet).height);
+        
+        // Start positions for pins
+        const startXPercent = isTiny ? 0.27 : (isVerySmall ? 0.24 : (isMobile ? 0.22 : 0.20));
+        const startX = chipletWidth * startXPercent;
+        const pinWidth = chipletWidth - (startX * 2);
+        
+        // Create top pins
+        for (let i = 0; i < topPinCount; i++) {
+          const xPos = startX + (pinWidth * i / (topPinCount - 1));
+          const pin = document.createElement('div');
+          pin.className = 'pin';
+          pin.style.left = xPos + 'px';
+          pin.style.top = pinEdgeDistance + 'px';
+          pinsContainer.appendChild(pin);
+          pins.push(pin);
+        }
+        
+        // Create left pins
+        for (let i = 0; i < sidePinCount; i++) {
+          const yPos = pinEdgeDistance + pinSpacing + i * pinSpacing;
+          const pin = document.createElement('div');
+          pin.className = 'pin';
+          pin.style.left = pinEdgeDistance + 'px';
+          pin.style.top = yPos + 'px';
+          pinsContainer.appendChild(pin);
+          pins.push(pin);
+        }
+        
+        // Create right pins
+        for (let i = 0; i < sidePinCount; i++) {
+          const yPos = pinEdgeDistance + pinSpacing + i * pinSpacing;
+          const pin = document.createElement('div');
+          pin.className = 'pin';
+          pin.style.right = pinEdgeDistance + 'px';
+          pin.style.top = yPos + 'px';
+          pinsContainer.appendChild(pin);
+          pins.push(pin);
+        }
+        
+        // Create bottom pins
+        for (let i = 0; i < topPinCount; i++) {
+          const xPos = startX + (pinWidth * i / (topPinCount - 1));
+          const pin = document.createElement('div');
+          pin.className = 'pin';
+          pin.style.left = xPos + 'px';
+          pin.style.bottom = pinEdgeDistance + 'px';
+          pinsContainer.appendChild(pin);
+          pins.push(pin);
+        }
+      }
+      
+      // Initial pin generation
+      generatePins();
+      
+      // Helper function to handle both click and touch events
+      function addClickAndTouchListener(element, handler) {
+        // Click event for desktop
+        element.addEventListener('click', handler);
+        
+        // Touch events for mobile browsers (especially Safari)
+        element.addEventListener('touchstart', function(e) {
+          // Just used to register the element being touched
+          element.classList.add('touched');
+        }, { passive: true });
+        
+        element.addEventListener('touchend', function(e) {
+          // Only trigger if this element was the one initially touched
+          if (element.classList.contains('touched')) {
+            element.classList.remove('touched');
+            handler(e);
+          }
+        });
+        
+        // Cancel touch if moved away
+        element.addEventListener('touchmove', function() {
+          element.classList.remove('touched');
+        }, { passive: true });
+        
+        // Cancel touch if touch is canceled
+        element.addEventListener('touchcancel', function() {
+          element.classList.remove('touched');
+        }, { passive: true });
+      }
+      
+      // Set up click and touch event listeners for all chiplet components
+      addClickAndTouchListener(gpuCore, function(e) {
+        e.preventDefault();
+        if (!isExpanded) {
+          console.log("GPU core activated");
+          expandComponent(gpuCore);
+        }
+      });
+      
+      addClickAndTouchListener(ramCore, function(e) {
+        e.preventDefault();
+        if (!isExpanded) {
+          console.log("RAM core activated");
+          expandComponent(ramCore);
+        }
+      });
+      
+      addClickAndTouchListener(ioCore, function(e) {
+        e.preventDefault();
+        if (!isExpanded) {
+          console.log("I/O core activated");
+          expandComponent(ioCore);
+        }
+      });
+      
+      addClickAndTouchListener(npuCore, function(e) {
+        e.preventDefault();
+        if (!isExpanded) {
+          console.log("NPU core activated");
+          expandComponent(npuCore);
+        }
+      });
+      
+      addClickAndTouchListener(cpuCore, function(e) {
+        e.preventDefault();
+        if (!isExpanded) {
+          console.log("CPU core activated");
+          expandComponent(cpuCore);
+        }
+      });
+      
+      // Set up close buttons with click and touch support
+      document.querySelectorAll('.close-button').forEach(button => {
+        addClickAndTouchListener(button, function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          console.log("Close button clicked");
+          if (isExpanded && activeComponent) {
+            collapseComponent();
+          }
+        });
+      });
+      
+      // Function to expand a component and show its content
+      function expandComponent(component) {
+        // Set active state
+        isExpanded = true;
+        activeComponent = component;
+        
+        // Get the corresponding content element
+        const contentId = componentContentMap[component.id];
+        const contentElement = document.getElementById(contentId);
+        
+        if (!contentElement) {
+          console.error("Content not found for component:", component.id);
+          return;
+        }
+        
+        // Determine if on mobile
+        const isMobile = window.innerWidth <= 768;
+        
+        // Flatten chiplet perspective
+        chiplet.style.transition = 'transform 0.6s ease';
+        chiplet.style.transform = isMobile 
+          ? 'perspective(1000px) rotateX(10deg) rotateZ(0deg)' 
+          : 'perspective(1440px) rotateX(5deg) rotateZ(0deg)';
+        
+        // Hide other components with a delay
+        setTimeout(() => {
+          // Hide all other components and pins
+          chipletParts.forEach(part => {
+            if (part !== component) {
+              part.style.opacity = '0';
+              part.style.pointerEvents = 'none';
+            }
+          });
+          
+          // Hide pins
+          pins.forEach(pin => pin.style.opacity = '0');
+          
+          // Hide labels
+          document.querySelectorAll('.title-label, .chip-label').forEach(label => {
+            if (!component.contains(label)) {
+              label.style.opacity = '0';
+            }
+          });
+          
+          // Change chiplet background
+          chiplet.style.backgroundColor = '#000000';
+          chiplet.style.boxShadow = '0 0 36px rgba(255, 215, 0, 0.3)';
+          
+          // Prepare the active component
+          component.style.transition = 'all 0.8s ease';
+          component.style.backgroundColor = '#000000';
+          component.style.border = '2px solid #FFD700';
+          component.style.zIndex = '999';
+          
+          // Mobile specific behavior
+          if (isMobile) {
+            // Hide the active component after a delay
+            setTimeout(() => {
+              component.style.opacity = '0';
+              
+              // Show content
+              setTimeout(() => {
+                contentElement.style.position = 'absolute';
+                contentElement.style.top = '0';
+                contentElement.style.left = '0';
+                contentElement.style.width = '100%';
+                contentElement.style.height = '100%';
+                contentElement.style.zIndex = '2000';
+                contentElement.style.display = 'block';
+                
+                // Force reflow before changing opacity
+                void contentElement.offsetWidth;
+                
+                // Show content
+                contentElement.style.opacity = '1';
+                contentElement.classList.add('active');
+              }, 200);
+            }, 400);
+          } else {
+            // Desktop behavior
+            if (component.id === 'cpu-core') {
+              // Center component expands to fill most of the chiplet
+              component.style.width = '80%';
+              component.style.height = '80%';
+              component.style.left = '50%';
+              component.style.top = '50%';
+              component.style.transform = 'translate(-50%, -50%)';
+            } else {
+              // Corner components expand differently
+              component.style.width = '80%';
+              component.style.height = '80%';
+              component.style.top = '10%';
+              
+              if (component.id === 'gpu-core' || component.id === 'io-core') {
+                // Left side components
+                component.style.left = '10%';
+                component.style.right = 'auto';
+              } else {
+                // Right side components
+                component.style.right = '10%';
+                component.style.left = 'auto';
+              }
+              
+              component.style.transform = 'none';
+            }
+            
+            // Show content after component expansion
+            setTimeout(() => {
+              contentElement.style.display = 'block';
+              
+              // Force reflow before changing opacity
+              void contentElement.offsetWidth;
+              
+              // Fade in content
+              contentElement.style.opacity = '1';
+              contentElement.classList.add('active');
+            }, 800);
+          }
+        }, isMobile ? 300 : 500);
+      }
+      
+      // Function to collapse an expanded component
+      function collapseComponent() {
+        if (!activeComponent) return;
+        
+        // Get the active content element
+        const contentId = componentContentMap[activeComponent.id];
+        const contentElement = document.getElementById(contentId);
+        
+        if (!contentElement) {
+          console.error("Content not found for active component:", activeComponent.id);
+          return;
+        }
+        
+        // Determine if on mobile
+        const isMobile = window.innerWidth <= 768;
+        const isVerySmall = window.innerWidth <= 480;
+        
+        // Hide content
+        contentElement.style.opacity = '0';
+        contentElement.classList.remove('active');
+        
+        // Delay to allow content to fade out
+        setTimeout(() => {
+          // Hide content display
+          contentElement.style.display = 'none';
+          
+          // Reset active component
+          activeComponent.removeAttribute('style');
+          
+          // Re-apply necessary styles
+          activeComponent.style.backgroundColor = '#000000';
+          activeComponent.style.border = '2px solid rgba(255,255,255,0.8)';
+          
+          // Special handling for CPU core
+          if (activeComponent.id === 'cpu-core') {
+            activeComponent.style.transform = 'translate(-50%, -50%)';
+          }
+          
+          // Show all components
+          chipletParts.forEach(part => {
+            part.style.opacity = '1';
+            part.style.pointerEvents = 'auto';
+            
+            // Hide all chip labels
+            const chipLabel = part.querySelector('.chip-label');
+            if (chipLabel) chipLabel.style.opacity = '0';
+          });
+          
+          // Show all title labels
+          document.querySelectorAll('.title-label').forEach(label => {
+            label.style.opacity = '1';
+          });
+          
+          // Show pins
+          pins.forEach(pin => pin.style.opacity = '1');
+          
+          // Reset chiplet
+          chiplet.style.backgroundColor = '#4DAF7C';
+          chiplet.style.boxShadow = '0 36px 36px rgba(0,0,0,0.2)';
+          
+          // Reset chiplet transform after a delay
+          setTimeout(() => {
+            // Remove transform style and apply appropriate transform based on screen size
+            chiplet.style.removeProperty('transform');
+            
+            if (isVerySmall) {
+              chiplet.style.transform = 'perspective(800px) rotateX(25deg) rotateZ(-8deg)';
+            } else if (isMobile) {
+              chiplet.style.transform = 'perspective(1000px) rotateX(25deg) rotateZ(-10deg)';
+            } else {
+              chiplet.style.transform = 'perspective(1440px) rotateX(30deg) rotateZ(-10deg)';
+            }
+            
+            // Regenerate pins
+            setTimeout(() => {
+              generatePins();
+            }, 200);
+            
+            // Reset state
+            isExpanded = false;
+            activeComponent = null;
+          }, 300);
+        }, isMobile ? 200 : 400);
+      }
+      
+      // Handle window resize
+      window.addEventListener('resize', function() {
+        // Only regenerate pins when not expanded
+        if (!isExpanded) {
+          generatePins();
+        }
+      });
+      
+      // Set up hover effects for component labels
+      chipletParts.forEach(part => {
+        const chipLabel = part.querySelector('.chip-label');
+        if (chipLabel) {
+          // Set initial opacity
+          chipLabel.style.opacity = '0';
+          
+          // Add hover effect
+          part.addEventListener('mouseenter', function() {
+            if (!isExpanded && chipLabel) {
+              chipLabel.style.opacity = '1';
+            }
+          });
+          
+          part.addEventListener('mouseleave', function() {
+            if (!isExpanded && chipLabel) {
+              chipLabel.style.opacity = '0';
+            }
+          });
+        }
+      });
+      
+      // Make the closeContent function available globally
+      window.closeContent = function(coreId) {
+        if (isExpanded && coreId === activeComponent?.id) {
+          collapseComponent();
+        }
+      };
+    });
+  </script>
+</body>
+</html>
+

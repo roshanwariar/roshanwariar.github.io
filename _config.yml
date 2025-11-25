@@ -1,0 +1,13 @@
+title: Roshan's Blog
+description: Stuff I find interesting, mostly physics, hardware, AI, and neuroscience
+author: Roshan Wariar
+url: https://roshanwariar.github.io
+theme: minima
+
+# Exclude files from being processed
+exclude:
+  - .gitignore
+  - README.md
+
+# Post permalink structure
+permalink: /:year/:month/:day/:title/

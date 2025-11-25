@@ -1,8 +1,10 @@
 ---
 layout: post
-title: "Hello World: Starting My Blog"
+title: "Hello World/About Me"
 date: 2025-11-25
 image: 
 ---
 
 Hi everyone, my name is Roshan. I like physics, AI, and neuroscience. Though most of my academic/professional experience is in hardware design, I am always thinking of interesting (to me) experiments and thought getting into software would be a cool way to take a stab at some of them. I'm new to GitHub and programming in general, so excuse any obvious mistakes :) Hope you find the posts interesting, and you can contact me at roshan dot wariar at gmail dot com if you'd like to chat!
+
+Outside of technical work, I enjoy watching films (neo-noir, sci-fi), listening to/making music (post-punk, indie rock, experimental), and cooking. 

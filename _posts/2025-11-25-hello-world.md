@@ -1,21 +1,8 @@
 ---
 layout: post
-title: "Hello World: Starting My Computation Blog"
-date: 2025-01-15
-image: /assets/images/hello-world.jpg
+title: "Hello World: Starting My Blog"
+date: 2025-11-25
+image: 
 ---
 
-Welcome to my blog! Here I'll be exploring topics at the intersection of computation.
-
-## What to Expect
-
-- **Statistical Physics**: Phase transitions, information theory, and thermodynamics
-- **Hardware Design**: Circuit design, FPGA, and embedded systems
-- **AI & Machine Learning**: Neural networks and computational neuroscience
-- **Neuroscience**: Brain computation and biologically-inspired algorithms
-
-This is your first post. Replace this content with your own.
-
-## Adding Images
-
-Place images in `assets/images/` and reference them with:
+Hi everyone, my name is Roshan. I like physics, AI, and neuroscience. Though most of my academic/professional experience is in hardware design, I am always thinking of interesting (to me) experiments and thought getting into software would be a cool way to take a stab at some of them. I'm new to GitHub and programming in general, so excuse any obvious mistakes :) Hope you find the posts interesting, and you can contact me at roshan dot wariar at gmail dot com if you'd like to chat!

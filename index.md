@@ -1,11 +1,11 @@
 ---
 layout: default
-title: Computation Blog
+title: Roshan's Blog
 ---
 
 # Welcome
 
-Exploring the intersection of computation across physics, hardware design, AI, and neuroscience.
+Projects on topics I find interesting - usually hardware, AI, and physics
 
 ## Latest Posts
 

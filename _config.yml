@@ -4,6 +4,11 @@ author: Roshan Wariar
 url: https://roshanwariar.github.io
 theme: minima
 
+markdown: kramdown
+kramdown:
+  math_engine: mathjax
+  input: GFM
+
 # Exclude files from being processed
 exclude:
   - .gitignore

@@ -6,7 +6,7 @@ theme: minima
 
 markdown: kramdown
 kramdown:
-  math_engine: mathjax
+  math_engine: nil
   input: GFM
 
 # Exclude files from being processed
